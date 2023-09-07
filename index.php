@@ -1,6 +1,8 @@
 <?php
 require 'vendor/autoload.php';
 
+
+
 // Sprawdzenie, czy formularz został przesłany
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['text_input'])) {
   $text = $_POST['text_input'];
@@ -17,12 +19,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['text_input'])) {
   $barcodeData = $generator->getBarcode($text, $generator::TYPE_CODE_128);
 
   // Zapisanie kodu kreskowego jako JPEG
-  $jpgPath = 'barcode.jpg';
+  $timestamp = time();
+  $jpgPath = 'barcode_' . $timestamp . '.jpg';
+  $webpPath = 'barcode_' . $timestamp . '.webp';
+
   file_put_contents($jpgPath, $barcodeData);
 
   // Konwersja JPEG do WebP
   $image = imagecreatefromjpeg($jpgPath);
-  imagewebp($image, 'barcode.webp');
+  imagewebp($image, $webpPath);
   imagedestroy($image);
 }
 
@@ -48,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['text_input'])) {
   <?php
   if (isset($text)) {
     echo "<h2>Wygenerowany kod kreskowy:</h2>";
-    echo "<img src='barcode.webp' alt='Kod kreskowy'>";
+    echo "<img src='" . $webpPath . "' alt='Kod kreskowy'>";
   }
   ?>
 </body>
