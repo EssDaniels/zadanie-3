@@ -5,6 +5,14 @@ require 'vendor/autoload.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['text_input'])) {
   $text = $_POST['text_input'];
 
+  // Walidacja długości tekstu
+  if (strlen($text) > 100) {
+    die('Tekst jest zbyt długi.');
+  }
+
+  // Sanityzacja danych
+  $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+
   $generator = new Picqer\Barcode\BarcodeGeneratorJPG();
   $barcodeData = $generator->getBarcode($text, $generator::TYPE_CODE_128);
 
@@ -17,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['text_input'])) {
   imagewebp($image, 'barcode.webp');
   imagedestroy($image);
 }
+
 
 ?>
 
